@@ -1,15 +1,19 @@
 public final class io/github/lexadiky/ktor/openapivalidator/OpenApiValidatorConfig {
 	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun atlassian (Lkotlin/jvm/functions/Function1;)V
 	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Lio/github/lexadiky/ktor/openapivalidator/OpenApiValidatorConfig;
-	public static synthetic fun copy$default (Lio/github/lexadiky/ktor/openapivalidator/OpenApiValidatorConfig;Ljava/lang/String;ILjava/lang/Object;)Lio/github/lexadiky/ktor/openapivalidator/OpenApiValidatorConfig;
+	public final fun copy (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lio/github/lexadiky/ktor/openapivalidator/OpenApiValidatorConfig;
+	public static synthetic fun copy$default (Lio/github/lexadiky/ktor/openapivalidator/OpenApiValidatorConfig;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/github/lexadiky/ktor/openapivalidator/OpenApiValidatorConfig;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getSpecificationUrl ()Ljava/lang/String;
 	public fun hashCode ()I
 	public final fun setSpecificationUrl (Ljava/lang/String;)V
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface annotation class io/github/lexadiky/ktor/openapivalidator/OpenApiValidatorDelicateApi : java/lang/annotation/Annotation {
 }
 
 public final class io/github/lexadiky/ktor/openapivalidator/OpenApiValidatorKt {

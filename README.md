@@ -11,7 +11,7 @@ A Ktor plugin for validating HTTP requests and responses against an OpenAPI spec
 
 ```kotlin
 dependencies {
-    implementation("io.github.lexa-diky:ktor-openapi-validator:0.0.1")
+    implementation("io.github.lexa-diky:ktor-openapi-validator:0.1.0")
 }
 ```
 

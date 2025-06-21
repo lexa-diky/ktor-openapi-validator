@@ -18,18 +18,34 @@ import io.ktor.http.encodedPath
 import io.ktor.util.AttributeKey
 import org.junit.jupiter.api.Assertions
 
-
+/**
+ * Ktor HTTP client plugin for validating requests and responses against an OpenAPI specification.
+ * Intended to be used only in tests.
+ */
 @Suppress("unused")
 val OpenApiValidator = createClientPlugin(
     name = "OpenApiValidator",
     createConfiguration = ::OpenApiValidatorConfig
 ) {
-    val specificationUrl = pluginConfig.specificationUrl
-        ?: error("specificationUrl must be set in configuration")
+    val builder = OpenApiInteractionValidator.Builder()
 
-    val validator = OpenApiInteractionValidator
-        .createForSpecificationUrl(specificationUrl)
-        .build()
+    require(
+        (pluginConfig.specificationUrl != null) xor
+                (pluginConfig.atlassianValidatorConfigFn != null)
+    ) {
+        "Plugin could be configured either by setting validator agnostic parameters like " +
+                "`specificationUrl` or by `atlassian { ... }` not both."
+    }
+
+    if (pluginConfig.specificationUrl != null || pluginConfig.atlassianValidatorConfigFn != null) {
+        "Please configure `specificationUrl` to specify which `openapi` specification should be used"
+    }
+
+    if (pluginConfig.atlassianValidatorConfigFn != null) {
+        builder.apply(pluginConfig.atlassianValidatorConfigFn!!)
+    }
+
+    val validator = builder.build()
 
     val requestContentAttr = AttributeKey<OutgoingContent>("OpenApiValidatorRequestContent")
 
@@ -40,6 +56,7 @@ val OpenApiValidator = createClientPlugin(
                 subject as String,
                 contentType = ContentType.Text.Any
             )
+
             else -> error("Unsupported subject type: ${subject::class}")
         }
         this.context.attributes.put(requestContentAttr, textContent)
@@ -82,8 +99,18 @@ val OpenApiValidator = createClientPlugin(
 }
 
 data class OpenApiValidatorConfig(
+    /**
+     * Path to your `openapi` specification file.
+     */
     var specificationUrl: String? = null,
-)
+    internal var atlassianValidatorConfigFn: (OpenApiInteractionValidator.Builder.() -> Unit)? = null,
+) {
+
+    @OpenApiValidatorDelicateApi
+    fun atlassian(block: OpenApiInteractionValidator.Builder.() -> Unit) {
+        atlassianValidatorConfigFn = block
+    }
+}
 
 private fun assertReportJunit5(validationReport: ValidationReport) {
     if (validationReport.hasErrors()) {
