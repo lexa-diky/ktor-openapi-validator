@@ -1,4 +1,4 @@
-# ktor-openapi-validator
+# Ktor OpenApi (Swagger) Validator
 
 ![Github Actions Build](https://img.shields.io/github/actions/workflow/status/lexa-diky/ktor-openapi-validator/build.yml)
 ![Stars](https://img.shields.io/github/stars/lexa-diky/ktor-openapi-validator)
