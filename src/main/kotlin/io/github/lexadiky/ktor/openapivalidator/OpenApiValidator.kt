@@ -5,18 +5,18 @@ import com.atlassian.oai.validator.model.Request
 import com.atlassian.oai.validator.model.SimpleRequest
 import com.atlassian.oai.validator.model.SimpleResponse
 import com.atlassian.oai.validator.report.ValidationReport
-import io.ktor.client.call.body
-import io.ktor.client.call.save
-import io.ktor.client.plugins.api.createClientPlugin
-import io.ktor.client.request.HttpRequestPipeline
-import io.ktor.client.statement.HttpReceivePipeline
-import io.ktor.client.statement.request
+import com.atlassian.oai.validator.whitelist.ValidationErrorsWhitelist
+import com.atlassian.oai.validator.whitelist.rule.WhitelistRule
+import io.ktor.client.call.*
+import io.ktor.client.plugins.api.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.content.TextContent
-import io.ktor.http.ContentType
-import io.ktor.http.content.OutgoingContent
-import io.ktor.http.encodedPath
-import io.ktor.util.AttributeKey
+import io.ktor.http.*
+import io.ktor.http.content.*
+import io.ktor.util.*
 import org.junit.jupiter.api.Assertions
+import kotlin.reflect.KProperty
 
 /**
  * Ktor HTTP client plugin for validating requests and responses against an OpenAPI specification.
@@ -27,25 +27,8 @@ val OpenApiValidator = createClientPlugin(
     name = "OpenApiValidator",
     createConfiguration = ::OpenApiValidatorConfig
 ) {
-    val builder = OpenApiInteractionValidator.Builder()
-
-    require(
-        (pluginConfig.specificationUrl != null) xor
-                (pluginConfig.atlassianValidatorConfigFn != null)
-    ) {
-        "Plugin could be configured either by setting validator agnostic parameters like " +
-                "`specificationUrl` or by `atlassian { ... }` not both."
-    }
-
-    if (pluginConfig.specificationUrl != null || pluginConfig.atlassianValidatorConfigFn != null) {
-        "Please configure `specificationUrl` to specify which `openapi` specification should be used"
-    }
-
-    if (pluginConfig.atlassianValidatorConfigFn != null) {
-        builder.apply(pluginConfig.atlassianValidatorConfigFn!!)
-    }
-
-    val validator = builder.build()
+    val validator = pluginConfig.prebuild()
+        .build()
 
     val requestContentAttr = AttributeKey<OutgoingContent>("OpenApiValidatorRequestContent")
 
@@ -98,17 +81,56 @@ val OpenApiValidator = createClientPlugin(
     }
 }
 
-data class OpenApiValidatorConfig(
-    /**
-     * Path to your `openapi` specification file.
-     */
-    var specificationUrl: String? = null,
-    internal var atlassianValidatorConfigFn: (OpenApiInteractionValidator.Builder.() -> Unit)? = null,
-) {
+class OpenApiValidatorConfig {
+    private var mode = Mode.UNKNOWN
+    private val builder = OpenApiInteractionValidator.Builder()
+    internal val whitelist = ValidationErrorsWhitelist.create()
+
+    var specificationUrl: String? by AgnosticParam {
+        withApiSpecificationUrl(it)
+    }
+
+    fun whitelist(name: String, block: RuleMatchContext.() -> Boolean) {
+        whitelist.withRule(name, RuleMatcher.from(block).intoAtlassianWhitelistRule())
+    }
 
     @OpenApiValidatorDelicateApi
     fun atlassian(block: OpenApiInteractionValidator.Builder.() -> Unit) {
-        atlassianValidatorConfigFn = block
+        require(mode != Mode.AGNOSTIC, CONFIG_TYPE_MESSAGE)
+
+        mode = Mode.ATLASSIAN
+        builder.apply(block)
+    }
+
+    internal fun prebuild(): OpenApiInteractionValidator.Builder =
+        builder.withWhitelist(whitelist)
+
+    internal enum class Mode {
+        UNKNOWN, AGNOSTIC, ATLASSIAN
+    }
+
+    private class AgnosticParam<T>(private val bloc: OpenApiInteractionValidator.Builder.(T) -> Unit) {
+        private var field: T? = null
+
+        operator fun getValue(thisRef: OpenApiValidatorConfig, property: KProperty<*>): T? {
+            return field
+        }
+
+        operator fun setValue(thisRef: OpenApiValidatorConfig, property: KProperty<*>, value: T?) {
+            require(thisRef.mode != Mode.ATLASSIAN, CONFIG_TYPE_MESSAGE)
+            thisRef.mode = Mode.AGNOSTIC
+            field = value
+        }
+    }
+
+    companion object {
+
+        val CONFIG_TYPE_MESSAGE: () -> Any = {
+            """You configured validator with both implementation agnostic and atlassian validator specific parameters. 
+                |This is not allowed, please use either agnostic methods not marked with @OpenApiValidatorDelicateApi. 
+                |Or remove them in favor of `atlassian { ... }` configuration marked with @OpenApiValidatorDelicateApi.
+                |""".trimMargin()
+        }
     }
 }
 
