@@ -1,11 +1,15 @@
+@file:OptIn(OpenApiValidatorDelicateApi::class)
+
 package io.github.lexadiky.ktor.openapivalidator
 
 import com.atlassian.oai.validator.OpenApiInteractionValidator
 import com.atlassian.oai.validator.model.Request
 import com.atlassian.oai.validator.model.SimpleRequest
 import com.atlassian.oai.validator.model.SimpleResponse
-import com.atlassian.oai.validator.report.ValidationReport
 import com.atlassian.oai.validator.whitelist.ValidationErrorsWhitelist
+import io.github.lexadiky.ktor.openapivalidator.reporter.ErrorReporter
+import io.github.lexadiky.ktor.openapivalidator.reporter.Junit5ErrorReporter
+import io.github.lexadiky.ktor.openapivalidator.reporter.reportIfErrors
 import io.ktor.client.call.body
 import io.ktor.client.call.save
 import io.ktor.client.plugins.api.createClientPlugin
@@ -17,7 +21,6 @@ import io.ktor.http.ContentType
 import io.ktor.http.content.OutgoingContent
 import io.ktor.http.encodedPath
 import io.ktor.util.AttributeKey
-import org.junit.jupiter.api.Assertions
 import kotlin.reflect.KProperty
 
 /**
@@ -29,8 +32,10 @@ val OpenApiValidator = createClientPlugin(
     name = "OpenApiValidator",
     createConfiguration = ::OpenApiValidatorConfig
 ) {
-    val validator = pluginConfig.prebuild()
-        .build()
+    pluginConfig.prebuild()
+
+    val validator = pluginConfig.validatorBuilder.build()
+    val reporter = pluginConfig.reporter
 
     val requestContentAttr = AttributeKey<OutgoingContent>("OpenApiValidatorRequestContent")
 
@@ -61,9 +66,8 @@ val OpenApiValidator = createClientPlugin(
             builder.withQueryParam(parameterName, context.url.parameters.getAll(parameterName) ?: emptyList())
         }
         val report = validator.validateRequest(builder.build())
-        assertReportJunit5(report)
+        reporter.reportIfErrors(report)
     }
-
 
     client.receivePipeline.intercept(HttpReceivePipeline.Before) { response ->
         val saved = response.call.save()
@@ -80,7 +84,7 @@ val OpenApiValidator = createClientPlugin(
             builder.build()
         )
 
-        assertReportJunit5(report)
+        reporter.reportIfErrors(report)
 
         proceedWith(saved.response)
     }
@@ -88,9 +92,10 @@ val OpenApiValidator = createClientPlugin(
 
 class OpenApiValidatorConfig {
     private var mode = Mode.UNKNOWN
-    private val builder = OpenApiInteractionValidator.Builder()
+    internal var validatorBuilder = OpenApiInteractionValidator.Builder()
     internal var whitelist = ValidationErrorsWhitelist.create()
 
+    var reporter: ErrorReporter = Junit5ErrorReporter()
     var specificationUrl: String? by AgnosticParam {
         withApiSpecificationUrl(it)
     }
@@ -106,11 +111,12 @@ class OpenApiValidatorConfig {
         require(mode != Mode.AGNOSTIC, CONFIG_TYPE_MESSAGE)
 
         mode = Mode.ATLASSIAN
-        builder.apply(block)
+        validatorBuilder.apply(block)
     }
 
-    internal fun prebuild(): OpenApiInteractionValidator.Builder =
-        builder.withWhitelist(whitelist)
+    internal fun prebuild() {
+        validatorBuilder = validatorBuilder.withWhitelist(whitelist)
+    }
 
     internal enum class Mode {
         UNKNOWN, AGNOSTIC, ATLASSIAN
@@ -126,7 +132,7 @@ class OpenApiValidatorConfig {
         operator fun setValue(thisRef: OpenApiValidatorConfig, property: KProperty<*>, value: T) {
             require(thisRef.mode != Mode.ATLASSIAN, CONFIG_TYPE_MESSAGE)
             thisRef.mode = Mode.AGNOSTIC
-            bloc.invoke(thisRef.builder, value)
+            bloc.invoke(thisRef.validatorBuilder, value)
             field = value
         }
     }
@@ -138,14 +144,6 @@ class OpenApiValidatorConfig {
                 |This is not allowed, please use either agnostic methods not marked with @OpenApiValidatorDelicateApi. 
                 |Or remove them in favor of `atlassian { ... }` configuration marked with @OpenApiValidatorDelicateApi.
                 |""".trimMargin()
-        }
-    }
-}
-
-private fun assertReportJunit5(validationReport: ValidationReport) {
-    if (validationReport.hasErrors()) {
-        validationReport.messages.forEach { message ->
-            Assertions.fail(message.toString())
         }
     }
 }

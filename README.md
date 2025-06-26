@@ -11,7 +11,7 @@ A Ktor plugin for validating HTTP requests and responses against an OpenAPI spec
 
 ```kotlin
 dependencies {
-    testImplementation("io.github.lexa-diky:ktor-openapi-validator:0.2.1")
+    testImplementation("io.github.lexa-diky:ktor-openapi-validator:0.3.0")
 }
 ```
 
@@ -48,5 +48,33 @@ val client = HttpClient {
             response.code?.isSuccess() == false
         }
     }
+}
+```
+
+### Custom reporters
+
+You can provide a custom reporter to handle validation errors. The default reporter will use Junit5 assertions to report
+errors.
+
+```kotlin
+install(OpenApiValidator) {
+    specificationUrl = "openapi.yaml"
+    reporter = TextReporter { messages ->
+        messages.forEach { message ->
+            println("OpenAPI validation error: $message")
+        }
+    }
+}
+```
+
+## Junit5 Integration
+
+Library integrates with Junit5 via compile time dependency.
+Please provide appropriate implementation on classpath if you are using default reporter.
+
+```kotlin
+dependencies {
+    testImplementation("io.github.lexa-diky:ktor-openapi-validator:<latest-version>")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:<your-junit-version>")
 }
 ```

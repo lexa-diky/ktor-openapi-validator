@@ -2,7 +2,9 @@ public final class io/github/lexadiky/ktor/openapivalidator/OpenApiValidatorConf
 	public static final field Companion Lio/github/lexadiky/ktor/openapivalidator/OpenApiValidatorConfig$Companion;
 	public fun <init> ()V
 	public final fun atlassian (Lkotlin/jvm/functions/Function1;)V
+	public final fun getReporter ()Lio/github/lexadiky/ktor/openapivalidator/reporter/ErrorReporter;
 	public final fun getSpecificationUrl ()Ljava/lang/String;
+	public final fun setReporter (Lio/github/lexadiky/ktor/openapivalidator/reporter/ErrorReporter;)V
 	public final fun setSpecificationUrl (Ljava/lang/String;)V
 	public final fun whitelist (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
 }
@@ -56,5 +58,25 @@ public final class io/github/lexadiky/ktor/openapivalidator/RuleMatcher$Request 
 public final class io/github/lexadiky/ktor/openapivalidator/RuleMatcher$Response {
 	public fun <init> (Lio/ktor/http/HttpStatusCode;)V
 	public final fun getCode ()Lio/ktor/http/HttpStatusCode;
+}
+
+public abstract interface class io/github/lexadiky/ktor/openapivalidator/reporter/ErrorReporter {
+	public abstract fun report (Lcom/atlassian/oai/validator/report/ValidationReport;)V
+}
+
+public final class io/github/lexadiky/ktor/openapivalidator/reporter/Junit5ErrorReporter : io/github/lexadiky/ktor/openapivalidator/reporter/ErrorReporter {
+	public fun <init> ()V
+	public fun report (Lcom/atlassian/oai/validator/report/ValidationReport;)V
+}
+
+public abstract class io/github/lexadiky/ktor/openapivalidator/reporter/TextErrorReporter : io/github/lexadiky/ktor/openapivalidator/reporter/ErrorReporter {
+	public static final field Companion Lio/github/lexadiky/ktor/openapivalidator/reporter/TextErrorReporter$Companion;
+	public fun <init> ()V
+	public fun report (Lcom/atlassian/oai/validator/report/ValidationReport;)V
+	public abstract fun reportMessages (Ljava/util/List;)V
+}
+
+public final class io/github/lexadiky/ktor/openapivalidator/reporter/TextErrorReporter$Companion {
+	public final fun invoke (Lkotlin/jvm/functions/Function1;)Lio/github/lexadiky/ktor/openapivalidator/reporter/ErrorReporter;
 }
 
