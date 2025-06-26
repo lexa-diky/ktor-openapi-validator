@@ -48,8 +48,9 @@ public final class io/github/lexadiky/ktor/openapivalidator/RuleMatcher$Operatio
 }
 
 public final class io/github/lexadiky/ktor/openapivalidator/RuleMatcher$Request {
-	public fun <init> (Lio/ktor/http/HttpMethod;)V
+	public fun <init> (Lio/ktor/http/HttpMethod;Ljava/lang/String;)V
 	public final fun getMethod ()Lio/ktor/http/HttpMethod;
+	public final fun getPath ()Ljava/lang/String;
 }
 
 public final class io/github/lexadiky/ktor/openapivalidator/RuleMatcher$Response {

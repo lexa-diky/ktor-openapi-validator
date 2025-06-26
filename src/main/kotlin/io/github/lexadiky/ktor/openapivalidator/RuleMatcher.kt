@@ -11,7 +11,7 @@ fun interface RuleMatcher {
 
     fun match(operation: Operation, request: Request, response: Response): Boolean
 
-    class Request(val method: HttpMethod?)
+    class Request(val method: HttpMethod?, val path: String?)
 
     class Response(val code: HttpStatusCode?)
 
@@ -37,7 +37,10 @@ fun interface RuleMatcher {
 internal fun RuleMatcher.intoAtlassianWhitelistRule(): WhitelistRule {
     return WhitelistRule { message, operation, request, response ->
         val agOperation = Operation(id = operation?.operation?.operationId)
-        val agRequest = Request(method = request?.method?.name?.let(HttpMethod::parse))
+        val agRequest = Request(
+            method = request?.method?.name?.let(HttpMethod::parse),
+            path = request?.path
+        )
         val agResponse = Response(code = response?.status?.let(HttpStatusCode::fromValue))
 
         this.match(agOperation, agRequest, agResponse)
