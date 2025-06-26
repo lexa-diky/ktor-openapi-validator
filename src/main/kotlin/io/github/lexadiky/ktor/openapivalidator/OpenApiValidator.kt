@@ -6,15 +6,17 @@ import com.atlassian.oai.validator.model.SimpleRequest
 import com.atlassian.oai.validator.model.SimpleResponse
 import com.atlassian.oai.validator.report.ValidationReport
 import com.atlassian.oai.validator.whitelist.ValidationErrorsWhitelist
-import com.atlassian.oai.validator.whitelist.rule.WhitelistRule
-import io.ktor.client.call.*
-import io.ktor.client.plugins.api.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
+import io.ktor.client.call.body
+import io.ktor.client.call.save
+import io.ktor.client.plugins.api.createClientPlugin
+import io.ktor.client.request.HttpRequestPipeline
+import io.ktor.client.statement.HttpReceivePipeline
+import io.ktor.client.statement.request
 import io.ktor.content.TextContent
-import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.util.*
+import io.ktor.http.ContentType
+import io.ktor.http.content.OutgoingContent
+import io.ktor.http.encodedPath
+import io.ktor.util.AttributeKey
 import org.junit.jupiter.api.Assertions
 import kotlin.reflect.KProperty
 
@@ -55,6 +57,9 @@ val OpenApiValidator = createClientPlugin(
         context.headers.entries().forEach {
             builder.withHeader(it.key, it.value)
         }
+        context.url.parameters.names().forEach { parameterName ->
+            builder.withQueryParam(parameterName, context.url.parameters.getAll(parameterName) ?: emptyList())
+        }
         val report = validator.validateRequest(builder.build())
         assertReportJunit5(report)
     }
@@ -84,14 +89,16 @@ val OpenApiValidator = createClientPlugin(
 class OpenApiValidatorConfig {
     private var mode = Mode.UNKNOWN
     private val builder = OpenApiInteractionValidator.Builder()
-    internal val whitelist = ValidationErrorsWhitelist.create()
+    internal var whitelist = ValidationErrorsWhitelist.create()
 
     var specificationUrl: String? by AgnosticParam {
         withApiSpecificationUrl(it)
     }
 
     fun whitelist(name: String, block: RuleMatchContext.() -> Boolean) {
-        whitelist.withRule(name, RuleMatcher.from(block).intoAtlassianWhitelistRule())
+        require(mode != Mode.ATLASSIAN, CONFIG_TYPE_MESSAGE)
+        mode = Mode.AGNOSTIC
+        whitelist = whitelist.withRule(name, RuleMatcher.from(block).intoAtlassianWhitelistRule())
     }
 
     @OpenApiValidatorDelicateApi
@@ -116,9 +123,10 @@ class OpenApiValidatorConfig {
             return field
         }
 
-        operator fun setValue(thisRef: OpenApiValidatorConfig, property: KProperty<*>, value: T?) {
+        operator fun setValue(thisRef: OpenApiValidatorConfig, property: KProperty<*>, value: T) {
             require(thisRef.mode != Mode.ATLASSIAN, CONFIG_TYPE_MESSAGE)
             thisRef.mode = Mode.AGNOSTIC
+            bloc.invoke(thisRef.builder, value)
             field = value
         }
     }

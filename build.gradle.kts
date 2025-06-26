@@ -43,7 +43,7 @@ tasks.withType<Test>().configureEach {
 
 mavenPublishing {
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
-    signAllPublications()
+    // signAllPublications()
     coordinates(
         groupId = group.toString(),
         artifactId = "ktor-openapi-validator",
