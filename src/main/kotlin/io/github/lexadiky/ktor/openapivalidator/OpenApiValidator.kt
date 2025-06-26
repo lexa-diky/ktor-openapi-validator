@@ -26,6 +26,17 @@ import kotlin.reflect.KProperty
 /**
  * Ktor HTTP client plugin for validating requests and responses against an OpenAPI specification.
  * Intended to be used only in tests.
+ *
+ * ### Usage:
+ * ```kotlin
+ * val client = HttpClient {
+ *     // ... rest of your configuration
+ *
+ *     install(OpenApiValidator) {
+ *         specificationUrl = "openapi.yaml" // this is required setting
+ *     }
+ * }
+ * ```
  */
 @Suppress("unused")
 val OpenApiValidator = createClientPlugin(
