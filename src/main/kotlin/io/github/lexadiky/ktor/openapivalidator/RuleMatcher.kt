@@ -7,6 +7,11 @@ import io.github.lexadiky.ktor.openapivalidator.RuleMatcher.Response
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 
+/**
+ * Interface for matching OpenAPI operations, requests, and responses against custom rules.
+ *
+ * Implementations should return `true` if the given operation, request, and response match the rule criteria.
+ */
 fun interface RuleMatcher {
 
     fun match(operation: Operation, request: Request, response: Response): Boolean
@@ -19,6 +24,9 @@ fun interface RuleMatcher {
 
     companion object {
 
+        /**
+         * Creates a `RuleMatcher` from a lambda, enabling a DSL-like style for defining matching rules.
+         */
         fun from(block: RuleMatchContext.() -> Boolean): RuleMatcher {
             return object : RuleMatcher {
                 override fun match(

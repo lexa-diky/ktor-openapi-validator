@@ -40,8 +40,7 @@ import kotlin.reflect.KProperty
  */
 @Suppress("unused")
 val OpenApiValidator = createClientPlugin(
-    name = "OpenApiValidator",
-    createConfiguration = ::OpenApiValidatorConfig
+    name = "OpenApiValidator", createConfiguration = ::OpenApiValidatorConfig
 ) {
     pluginConfig.prebuild()
 
@@ -54,8 +53,7 @@ val OpenApiValidator = createClientPlugin(
         val textContent = when (subject) {
             is OutgoingContent -> subject as OutgoingContent
             is String -> TextContent(
-                subject as String,
-                contentType = ContentType.Text.Any
+                subject as String, contentType = ContentType.Text.Any
             )
 
             else -> error("Unsupported subject type: ${subject::class}")
@@ -90,9 +88,7 @@ val OpenApiValidator = createClientPlugin(
         }
 
         val report = validator.validateResponse(
-            response.request.url.encodedPath,
-            Request.Method.valueOf(response.request.method.value),
-            builder.build()
+            response.request.url.encodedPath, Request.Method.valueOf(response.request.method.value), builder.build()
         )
 
         reporter.reportIfErrors(report)
@@ -106,17 +102,43 @@ class OpenApiValidatorConfig {
     internal var validatorBuilder = OpenApiInteractionValidator.Builder()
     internal var whitelist = ValidationErrorsWhitelist.create()
 
+    /**
+     * The error reporter used to report validation errors.
+     * Defaults to [Junit5ErrorReporter].
+     */
     var reporter: ErrorReporter = Junit5ErrorReporter()
+
+    /**
+     * The path or URL to the OpenAPI specification file.
+     * Is required for the validator to function.
+     */
     var specificationUrl: String? by AgnosticParam {
         withApiSpecificationUrl(it)
     }
 
+    /**
+     * Adds a whitelist rule to ignore specific requests or responses during validation.
+     *
+     * @param name the name of the whitelist rule for identification
+     * @param block a predicate that receives a [RuleMatchContext] and returns `true` if the rule should match.
+     * @throws IllegalArgumentException if the configuration mode is set to Atlassian-specific
+     */
     fun whitelist(name: String, block: RuleMatchContext.() -> Boolean) {
         require(mode != Mode.ATLASSIAN, CONFIG_TYPE_MESSAGE)
         mode = Mode.AGNOSTIC
         whitelist = whitelist.withRule(name, RuleMatcher.from(block).intoAtlassianWhitelistRule())
     }
 
+    /**
+     * Allows configuring the underlying Atlassian OpenApiInteractionValidator directly.
+     *
+     * Use this method if you need to access advanced or implementation-specific features
+     * of the Atlassian validator. This method is marked with [OpenApiValidatorDelicateApi]
+     * and is mutually exclusive with agnostic configuration methods.
+     *
+     * @param block configuration block for OpenApiInteractionValidator.Builder
+     * @throws IllegalArgumentException if agnostic configuration was already used
+     */
     @OpenApiValidatorDelicateApi
     fun atlassian(block: OpenApiInteractionValidator.Builder.() -> Unit) {
         require(mode != Mode.AGNOSTIC, CONFIG_TYPE_MESSAGE)
