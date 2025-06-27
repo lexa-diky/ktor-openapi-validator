@@ -4,8 +4,13 @@ import com.atlassian.oai.validator.whitelist.rule.WhitelistRule
 import io.github.lexadiky.ktor.openapivalidator.RuleMatcher.Operation
 import io.github.lexadiky.ktor.openapivalidator.RuleMatcher.Request
 import io.github.lexadiky.ktor.openapivalidator.RuleMatcher.Response
+import io.ktor.http.Headers
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.Parameters
+import io.ktor.http.headersOf
+import io.ktor.http.parameters
+import io.ktor.http.parametersOf
 
 /**
  * Interface for matching OpenAPI operations, requests, and responses against custom rules.
@@ -16,7 +21,7 @@ fun interface RuleMatcher {
 
     fun match(operation: Operation, request: Request, response: Response): Boolean
 
-    class Request(val method: HttpMethod?, val path: String?)
+    class Request(val method: HttpMethod?, val path: String?, val headers: Headers, val parameters: Parameters)
 
     class Response(val code: HttpStatusCode?)
 
@@ -47,10 +52,18 @@ internal fun RuleMatcher.intoAtlassianWhitelistRule(): WhitelistRule {
         val agOperation = Operation(id = operation?.operation?.operationId)
         val agRequest = Request(
             method = request?.method?.name?.let(HttpMethod::parse),
-            path = request?.path
+            path = request?.path,
+            headers = headersOf(
+                pairs = request?.headers
+                    ?.map { (name, values) -> name to values.toList() }?.toTypedArray()
+                    ?: emptyArray()
+            ),
+            parameters = parametersOf(
+                request?.headers
+                    ?.mapValues { (_, v) -> v.toList() } ?: emptyMap()
+            )
         )
         val agResponse = Response(code = response?.status?.let(HttpStatusCode::fromValue))
-
         this.match(agOperation, agRequest, agResponse)
     }
 }
