@@ -63,7 +63,9 @@ install(OpenApiValidator) {
 }
 ```
 
-## Junit5 Integration
+## Integrations and dependencies
+
+### Junit5
 
 Library integrates with Junit5 via compile time dependency.
 Please provide appropriate implementation on classpath if you are using default reporter.
@@ -72,5 +74,18 @@ Please provide appropriate implementation on classpath if you are using default 
 dependencies {
     testImplementation("io.github.lexa-diky:ktor-openapi-validator:<latest-version>")
     testImplementation("org.junit.jupiter:junit-jupiter-api:<your-junit-version>")
+}
+```
+
+### Ktor
+
+Library integrates with Ktor Client via compile time dependency. 
+It is compiled explicitly against Ktor 2.x, but works fine with Ktor 3.x as well.
+Please provide appropriate implementation on classpath.
+
+```kotlin
+dependencies {
+    testImplementation("io.github.lexa-diky:ktor-openapi-validator:<latest-version>")
+    testImplementation("io.ktor:ktor-client-core:<your-ktor-version>")
 }
 ```
