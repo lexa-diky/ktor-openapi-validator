@@ -52,7 +52,8 @@ public final class io/github/lexadiky/ktor/openapivalidator/RuleMatcher$Operatio
 }
 
 public final class io/github/lexadiky/ktor/openapivalidator/RuleMatcher$Request {
-	public fun <init> (Lio/ktor/http/HttpMethod;Ljava/lang/String;Lio/ktor/http/Headers;Lio/ktor/http/Parameters;)V
+	public fun <init> (Lio/ktor/http/HttpMethod;Ljava/lang/String;Lio/ktor/http/Headers;Lio/ktor/http/Parameters;Ljava/lang/String;)V
+	public final fun getBody ()Ljava/lang/String;
 	public final fun getHeaders ()Lio/ktor/http/Headers;
 	public final fun getMethod ()Lio/ktor/http/HttpMethod;
 	public final fun getParameters ()Lio/ktor/http/Parameters;
@@ -60,7 +61,8 @@ public final class io/github/lexadiky/ktor/openapivalidator/RuleMatcher$Request 
 }
 
 public final class io/github/lexadiky/ktor/openapivalidator/RuleMatcher$Response {
-	public fun <init> (Lio/ktor/http/HttpStatusCode;)V
+	public fun <init> (Lio/ktor/http/HttpStatusCode;Ljava/lang/String;)V
+	public final fun getBody ()Ljava/lang/String;
 	public final fun getCode ()Lio/ktor/http/HttpStatusCode;
 }
 

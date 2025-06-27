@@ -11,6 +11,7 @@ import io.ktor.http.Parameters
 import io.ktor.http.headersOf
 import io.ktor.http.parameters
 import io.ktor.http.parametersOf
+import kotlin.jvm.optionals.getOrNull
 
 /**
  * Interface for matching OpenAPI operations, requests, and responses against custom rules.
@@ -21,9 +22,15 @@ fun interface RuleMatcher {
 
     fun match(operation: Operation, request: Request, response: Response): Boolean
 
-    class Request(val method: HttpMethod?, val path: String?, val headers: Headers, val parameters: Parameters)
+    class Request(
+        val method: HttpMethod?,
+        val path: String?,
+        val headers: Headers,
+        val parameters: Parameters,
+        val body: String?,
+    )
 
-    class Response(val code: HttpStatusCode?)
+    class Response(val code: HttpStatusCode?, val body: String?)
 
     class Operation(val id: String?)
 
@@ -59,11 +66,16 @@ internal fun RuleMatcher.intoAtlassianWhitelistRule(): WhitelistRule {
                     ?: emptyArray()
             ),
             parameters = parametersOf(
-                request?.headers
-                    ?.mapValues { (_, v) -> v.toList() } ?: emptyMap()
-            )
+                map = request?.queryParameters
+                    ?.associate { name -> name to request.getQueryParameterValues(name).toList() }
+                    ?: emptyMap()
+            ),
+            body = request?.requestBody?.getOrNull()?.toString(Charsets.UTF_8),
         )
-        val agResponse = Response(code = response?.status?.let(HttpStatusCode::fromValue))
+        val agResponse = Response(
+            code = response?.status?.let(HttpStatusCode::fromValue),
+            body = response?.responseBody?.getOrNull()?.toString(Charsets.UTF_8),
+        )
         this.match(agOperation, agRequest, agResponse)
     }
 }
