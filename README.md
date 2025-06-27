@@ -37,16 +37,12 @@ You can whitelist specific requests or responses by providing a list of paths an
 validation.
 
 ```kotlin
-val client = HttpClient {
-    // ... rest of your configuration
+install(OpenApiValidator) {
+    specificationUrl = "openapi.yaml"
 
-    install(OpenApiValidator) {
-        specificationUrl = "openapi.yaml"
-
-        // Whitelist any response with error status code
-        whitelist("allow any error body") {
-            response.code?.isSuccess() == false
-        }
+    // Whitelist any response with error status code
+    whitelist("Allow any error") {
+        response.code?.isSuccess() == false
     }
 }
 ```
