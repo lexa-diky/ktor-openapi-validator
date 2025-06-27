@@ -111,9 +111,18 @@ class OpenApiValidatorConfig {
     /**
      * The path or URL to the OpenAPI specification file.
      * Is required for the validator to function.
+     * Supports both YAML and JSON formats.
      */
     var specificationUrl: String? by AgnosticParam {
         withApiSpecificationUrl(it)
+    }
+
+    /**
+     * The OpenAPI specification in string format.
+     * Supports both YAML and JSON formats.
+     */
+    var specification: String? by AgnosticParam {
+        withInlineApiSpecification(it)
     }
 
     /**

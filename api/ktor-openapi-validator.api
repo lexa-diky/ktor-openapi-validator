@@ -3,8 +3,10 @@ public final class io/github/lexadiky/ktor/openapivalidator/OpenApiValidatorConf
 	public fun <init> ()V
 	public final fun atlassian (Lkotlin/jvm/functions/Function1;)V
 	public final fun getReporter ()Lio/github/lexadiky/ktor/openapivalidator/reporter/ErrorReporter;
+	public final fun getSpecification ()Ljava/lang/String;
 	public final fun getSpecificationUrl ()Ljava/lang/String;
 	public final fun setReporter (Lio/github/lexadiky/ktor/openapivalidator/reporter/ErrorReporter;)V
+	public final fun setSpecification (Ljava/lang/String;)V
 	public final fun setSpecificationUrl (Ljava/lang/String;)V
 	public final fun whitelist (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
 }
