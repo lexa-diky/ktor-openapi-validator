@@ -17,7 +17,7 @@ repositories {
 
 dependencies {
     compileOnly("io.ktor:ktor-client-core:2.3.13")
-    compileOnly("org.junit.jupiter:junit-jupiter-api:5.8.0")
+    compileOnly("org.junit.jupiter:junit-jupiter-api:5.13.2")
     implementation("com.atlassian.oai:swagger-request-validator-core:2.44.9")
 }
 
