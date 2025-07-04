@@ -61,7 +61,7 @@ val OpenApiValidator = createClientPlugin(
         this.context.attributes.put(requestContentAttr, textContent)
     }
 
-    client.requestPipeline.intercept(HttpRequestPipeline.Send) {
+    client.requestPipeline.intercept(HttpRequestPipeline.Render) {
         val requestContent = context.attributes[requestContentAttr]
 
         val builder = SimpleRequest.Builder(context.method.value, context.url.encodedPath)
