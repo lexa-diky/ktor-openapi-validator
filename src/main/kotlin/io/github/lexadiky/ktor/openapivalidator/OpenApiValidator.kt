@@ -19,6 +19,7 @@ import io.ktor.client.statement.request
 import io.ktor.content.TextContent
 import io.ktor.http.ContentType
 import io.ktor.http.content.OutgoingContent
+import io.ktor.http.contentType
 import io.ktor.http.encodedPath
 import io.ktor.util.AttributeKey
 import kotlin.reflect.KProperty
@@ -82,6 +83,15 @@ val OpenApiValidator = createClientPlugin(
         val saved = response.call.save()
         val body = saved.body<String>()
         val builder = SimpleResponse.Builder(response.status.value)
+
+        val contentType = response.contentType()?.contentType
+        if (contentType == null) {
+            builder.withContentType(contentType)
+        }
+
+        response.headers.entries().forEach { (header, values) ->
+            builder.withHeader(header, values)
+        }
 
         if (body.isNotEmpty()) {
             builder.withBody(body)
