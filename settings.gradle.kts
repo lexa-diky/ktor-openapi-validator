@@ -19,3 +19,5 @@ plugins {
 }
 
 rootProject.name = "ktor-openapi-validator"
+
+include("example")

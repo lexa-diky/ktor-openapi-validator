@@ -75,6 +75,12 @@ val OpenApiValidator = createClientPlugin(
         context.url.parameters.names().forEach { parameterName ->
             builder.withQueryParam(parameterName, context.url.parameters.getAll(parameterName) ?: emptyList())
         }
+
+        val contentType = context.contentType()?.contentType
+        if (contentType != null) {
+            builder.withContentType(contentType)
+        }
+
         val report = validator.validateRequest(builder.build())
         reporter.reportIfErrors(report)
     }
