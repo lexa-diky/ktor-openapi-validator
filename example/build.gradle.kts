@@ -13,15 +13,15 @@ repositories {
 
 dependencies {
     // Ktor server
-    implementation("io.ktor:ktor-server-core:2.3.13")
-    implementation("io.ktor:ktor-server-netty:2.3.13")
-    implementation("io.ktor:ktor-server-content-negotiation:2.3.13")
-    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.13")
+    implementation("io.ktor:ktor-server-core:3.2.2")
+    implementation("io.ktor:ktor-server-netty:3.2.2")
+    implementation("io.ktor:ktor-server-content-negotiation:3.2.2")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:3.2.2")
     
     // Ktor client
-    implementation("io.ktor:ktor-client-core:2.3.13")
-    implementation("io.ktor:ktor-client-cio:2.3.13")
-    implementation("io.ktor:ktor-client-content-negotiation:2.3.13")
+    implementation("io.ktor:ktor-client-core:3.2.2")
+    implementation("io.ktor:ktor-client-cio:3.2.2")
+    implementation("io.ktor:ktor-client-content-negotiation:3.2.2")
     
     // Logging
     implementation("ch.qos.logback:logback-classic:1.4.14")
