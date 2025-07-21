@@ -21,6 +21,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.assertThrows
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ApiValidationTest {
@@ -101,11 +103,10 @@ class ApiValidationTest {
     }
 
     @Test
-    fun `test create user - invalid request`() = runBlocking {
-        try {
-            // Creating an invalid request by omitting the required "pika" field
-            // This should be caught by the OpenAPI validator
-            val invalidUserRequestJson = """
+    fun `test create user - invalid request`(): Unit = runBlocking {
+        // Creating an invalid request by omitting the required "pika" field
+        // This should be caught by the OpenAPI validator
+        val invalidUserRequestJson = """
                 {
                     "name": "Invalid User",
                     "email": "invalid@example.com",
@@ -113,14 +114,11 @@ class ApiValidationTest {
                 }
             """.trimIndent()
 
+        assertThrows<Throwable> {
             client.post("http://localhost:8080/users") {
                 header("Content-Type", "application/json")
                 setBody(invalidUserRequestJson)
             }
-
-            assert(false) { "Expected validation to fail but it passed" }
-        } catch (e: Exception) {
-            println("Expected validation error: ${e.message}")
         }
     }
 }
