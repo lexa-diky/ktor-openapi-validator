@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "io.github.lexa-diky"
-version = "0.5.0"
+version = "1.0.0"
 
 repositories {
     mavenCentral()
