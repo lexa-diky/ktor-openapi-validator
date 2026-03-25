@@ -63,6 +63,9 @@ install(OpenApiValidator) {
 }
 ```
 
+Alternatively, you can use `AssertionErrorThrowReporter` to throw an `AssertionError` with all validation errors.
+This is useful in case you are using a test framework other than Junit5.
+
 ## Integrations and dependencies
 
 ### Junit5

@@ -66,6 +66,11 @@ public final class io/github/lexadiky/ktor/openapivalidator/RuleMatcher$Response
 	public final fun getCode ()Lio/ktor/http/HttpStatusCode;
 }
 
+public final class io/github/lexadiky/ktor/openapivalidator/reporter/AssertionErrorThrowReporter : io/github/lexadiky/ktor/openapivalidator/reporter/ErrorReporter {
+	public fun <init> ()V
+	public fun report (Lcom/atlassian/oai/validator/report/ValidationReport;)V
+}
+
 public abstract interface class io/github/lexadiky/ktor/openapivalidator/reporter/ErrorReporter {
 	public abstract fun report (Lcom/atlassian/oai/validator/report/ValidationReport;)V
 }
