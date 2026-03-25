@@ -2,14 +2,14 @@ import io.gitlab.arturbosch.detekt.Detekt
 import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
-    kotlin("jvm") version "1.9.20"
+    kotlin("jvm") version "2.1.0"
     id("com.vanniktech.maven.publish") version "0.33.0"
     id("io.gitlab.arturbosch.detekt") version "1.23.8"
     id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.18.1"
 }
 
 group = "io.github.lexa-diky"
-version = "1.0.0"
+version = "1.1.0"
 
 repositories {
     mavenCentral()
@@ -17,7 +17,7 @@ repositories {
 
 dependencies {
     compileOnly("io.ktor:ktor-client-core:2.3.13")
-    compileOnly("org.junit.jupiter:junit-jupiter-api:5.8.0")
+    compileOnly("org.junit.jupiter:junit-jupiter-api:6.0.0")
     implementation("com.atlassian.oai:swagger-request-validator-core:2.44.9")
 }
 

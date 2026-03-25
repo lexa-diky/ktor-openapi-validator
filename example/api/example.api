@@ -18,13 +18,13 @@ public final class com/example/models/Error {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class com/example/models/Error$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public synthetic class com/example/models/Error$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lcom/example/models/Error$$serializer;
-	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/example/models/Error;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/example/models/Error;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/example/models/Error;)V
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/example/models/Error;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -52,13 +52,13 @@ public final class com/example/models/User {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class com/example/models/User$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public synthetic class com/example/models/User$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lcom/example/models/User$$serializer;
-	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/example/models/User;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/example/models/User;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/example/models/User;)V
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/example/models/User;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
@@ -86,13 +86,13 @@ public final class com/example/models/UserRequest {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class com/example/models/UserRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
+public synthetic class com/example/models/UserRequest$$serializer : kotlinx/serialization/internal/GeneratedSerializer {
 	public static final field INSTANCE Lcom/example/models/UserRequest$$serializer;
-	public fun childSerializers ()[Lkotlinx/serialization/KSerializer;
-	public fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/example/models/UserRequest;
+	public final fun childSerializers ()[Lkotlinx/serialization/KSerializer;
+	public final fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Lcom/example/models/UserRequest;
 	public synthetic fun deserialize (Lkotlinx/serialization/encoding/Decoder;)Ljava/lang/Object;
-	public fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
-	public fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/example/models/UserRequest;)V
+	public final fun getDescriptor ()Lkotlinx/serialization/descriptors/SerialDescriptor;
+	public final fun serialize (Lkotlinx/serialization/encoding/Encoder;Lcom/example/models/UserRequest;)V
 	public synthetic fun serialize (Lkotlinx/serialization/encoding/Encoder;Ljava/lang/Object;)V
 	public fun typeParametersSerializers ()[Lkotlinx/serialization/KSerializer;
 }
