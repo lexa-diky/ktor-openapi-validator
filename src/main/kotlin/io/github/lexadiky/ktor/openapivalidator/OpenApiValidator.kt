@@ -7,21 +7,19 @@ import com.atlassian.oai.validator.model.Request
 import com.atlassian.oai.validator.model.SimpleRequest
 import com.atlassian.oai.validator.model.SimpleResponse
 import com.atlassian.oai.validator.whitelist.ValidationErrorsWhitelist
+import io.github.lexadiky.ktor.openapivalidator.cache.StaticCacheHolder
 import io.github.lexadiky.ktor.openapivalidator.reporter.ErrorReporter
 import io.github.lexadiky.ktor.openapivalidator.reporter.Junit5ErrorReporter
 import io.github.lexadiky.ktor.openapivalidator.reporter.reportIfErrors
-import io.ktor.client.call.body
-import io.ktor.client.call.save
-import io.ktor.client.plugins.api.createClientPlugin
-import io.ktor.client.request.HttpRequestPipeline
-import io.ktor.client.statement.HttpReceivePipeline
-import io.ktor.client.statement.request
+import io.ktor.client.call.*
+import io.ktor.client.plugins.api.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.content.TextContent
-import io.ktor.http.ContentType
-import io.ktor.http.content.OutgoingContent
-import io.ktor.http.contentType
-import io.ktor.http.encodedPath
-import io.ktor.util.AttributeKey
+import io.ktor.http.*
+import io.ktor.http.content.*
+import io.ktor.util.*
+import io.swagger.v3.parser.OpenAPIV3Parser
 import kotlin.reflect.KProperty
 
 /**
@@ -131,6 +129,17 @@ class OpenApiValidatorConfig {
      */
     var specificationUrl: String? by AgnosticParam {
         withApiSpecificationUrl(it)
+    }
+
+    /**
+     * Same as [specificationUrl] but the specification is cached in memory between tests.
+     * Useful for large specifications and if you are creating new Ktor clients for each test.
+     */
+    var cachedSpecificationUrl: String? by AgnosticParam {
+        val openapi = StaticCacheHolder.atlassianSpecifications.compute("spec_$it") {
+            OpenAPIV3Parser().read(it)
+        }
+        withApi(openapi)
     }
 
     /**
